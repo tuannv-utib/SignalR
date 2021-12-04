@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using SignalR.DataStorage;
 using SignalR.Hubs;
 using SignalR.Models;
+using SignalR.Repositories;
 using System;
 using static SignalR.TimeFeatures.TimeManager;
 
@@ -40,6 +41,16 @@ namespace SignalR.Controllers
             _hub.Clients.All.SendAsync("new_mess", mess);
 
             return Ok(new { Message = "Send mess success!" });
+        }
+
+        [HttpGet("token/{id}")]
+        public IActionResult AuthGetToken(int id)
+        {
+            var token = new Auth().Authenticate(id);
+            return Ok(new
+            {
+                token = token
+            });
         }
     }
 }

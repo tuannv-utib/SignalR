@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script src="signalr.js"></script>
+    <script>
+        var token = "";
+        const _getToken = (id) => fetch('/api/chat/token/' + id)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                token = data.token
+            });
+
+        let connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chat", { accessTokenFactory: () => token })
+            .build();
+
+        const _connect = () => connection.start()
+            .then(() => console.log('Connection started'))
+            .catch(err => {
+                console.log('Error while starting connection: ' + err);
+                setTimeout(() => _connect(), 5000)
+            })
+
+        connection.on("new_mess", (user, message) => {
+            console.log(user);
+            console.log(message);
+        });
+
+        connection.onclose(async () => {
+            console.log("disconnected!");
+            await _connect();
+        });
+
+        const _sendAll = () => connection.invoke('SendAll').then(r => console.log(r))
+
+    </script>
+</body>
+</html>
+

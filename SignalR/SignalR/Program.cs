@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SignalR.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,9 @@ namespace SignalR
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            ServiceActivator.Configure(host.Services);
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
